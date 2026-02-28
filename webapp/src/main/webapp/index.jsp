@@ -1,10 +1,10 @@
 <form action="action_page.php">
   <div class="container">
-    <h1>MANO WAS HERE</h1>
-    <p>Please DONT U DARE????fill in this form to create an account.</p>
+    <h1>NEW USER REGISTRATION</h1>
+    <p>Please fill this form to create an account.</p>
     <hr>
      
-    <label for="Name"><b>ENTER THY NAME</b></label>
+    <label for="Name"><b>Enter name</b></label>
     <input type="text" placeholder="Enter Full Name" name="Name" id="Name" required>
     <br>
     
@@ -12,7 +12,7 @@
     <input type="text" placeholder="Enter moible number" name="mobile" id="mobile" required>
     <br>
 
-    <label for="address"><b>ENTER ADDRESS</b></label>
+    <label for="address"><b>Enter address</b></label>
     <input type="text" placeholder="Enter you address" name="address" id="address" required>
     <br>
 
@@ -35,8 +35,6 @@
     <p>Already have an account? <a href="#">Sign in</a>.</p>
   </div>
 
-   <h1> GO AWAY!!! </h1>
-   <h1>HELLO HELLO</h1>
-   <h1>ONE MORE HELLO</h1>
+   <h1>Thnku!</h1>
   
 </form>
