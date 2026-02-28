@@ -2,7 +2,6 @@
   <div class="container">
     <h1>NEW USER REGISTRATION</h1>
     <p>Please fill this form to create an account.</p>
-    <p>MADE THIS EDIT</p>
     <hr>
      
     <label for="Name"><b>Enter name</b></label>
