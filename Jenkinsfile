@@ -37,7 +37,7 @@ pipeline {
     stage("Deploy on Docker Host") {
       steps {
         sshagent(credentials: ['DOCKER_HOST_SSH_KEY_ID']) {
-          sh """
+          sh '''
             ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_HOST} '
               set -e
               cd ${REMOTE_DIR}
@@ -85,7 +85,7 @@ pipeline {
                 fi
               fi
             '
-          """
+          '''
         }
       }
     }
