@@ -16,10 +16,14 @@ pipeline {
       steps { checkout scm }
     }
 
-    stage("Build WAR") {
+    stage('Build WAR') {
       steps {
-        sh "mvn -B -DskipTests clean package"
-        sh "ls -lh ${WAR_PATH}"
+        script {
+          def mvnHome = tool 'Maven'   // must match the name in Global Tool Configuration
+          sh """
+            ${mvnHome}/bin/mvn -B -DskipTests clean package
+          """
+        }
       }
     }
 
