@@ -3,6 +3,7 @@
     <h1>NEW USER REGISTRATION</h1>
     <p>Please fill this form to create an account.</p>
     <p><b>MADE THIS HERE</b></p>
+    <h2><u><i>ADDED A JENKINSFILE!!!!</i></u></h2>
     <hr>
      
     <label for="Name"><b>Enter name</b></label>
