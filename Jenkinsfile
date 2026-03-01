@@ -20,9 +20,9 @@ pipeline {
       steps {
         script {
           def mvnHome = tool 'Maven'   // must match the name in Global Tool Configuration
-          sh '''
+          sh """
             ${mvnHome}/bin/mvn -B -DskipTests clean package
-          '''
+          """
         }
       }
     }
@@ -31,9 +31,9 @@ pipeline {
       steps {
         // Use SSH key auth from Jenkins credentials (recommended)
         sshagent(credentials: ['DOCKER_HOST_SSH_KEY_ID']) {
-          sh '''
+          sh """
             scp -o StrictHostKeyChecking=no ${WAR_PATH} ${DOCKER_USER}@${DOCKER_HOST}:${REMOTE_DIR}/webapp.war
-          '''
+          """
         }
       }
     }
