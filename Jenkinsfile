@@ -68,31 +68,31 @@ pipeline {
           SLEEP=3
           ok=0
               
-          for i in $(seq 1 $MAX); do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || true)
-            if [ "$code" = "200" ] || [ "$code" = "302" ]; then
+          for i in $(seq 1 ${MAX}); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "${URL}" || true)
+            if [ "${code}" = "200" ] || [ "${code}" = "302" ]; then
               ok=1
-              echo "Healthy (HTTP $code)"
+              echo "Healthy (HTTP ${code})"
               break
             fi
-            echo "Not healthy yet (HTTP $code) attempt $i/$MAX"
-            sleep $SLEEP
+            echo "Not healthy yet (HTTP ${code}) attempt ${i}/${MAX}"
+            sleep ${SLEEP}
           done
               
-          if [ "$ok" -ne 1 ]; then
+          if [ "${ok}" -ne 1 ]; then
             echo "Health check failed. Rolling back..."
             docker rm -f ${APP_NAME} 2>/dev/null || true
-            if [ -n "$PREV" ]; then
-              docker run -d --restart=always --name ${APP_NAME} -p ${HOST_PORT}:${CONT_PORT} ${APP_NAME}:$PREV
+            if [ -n "${PREV}" ]; then
+              docker run -d --restart=always --name ${APP_NAME} -p ${HOST_PORT}:${CONT_PORT} ${APP_NAME}:${PREV}
             else
               echo "No previous image available for rollback."
               exit 1
             fi
           fi
 
-          echo "APP_NAME=$APP_NAME"
-          echo "BUILD_NUMBER=$BUILD_NUMBER"
-          echo "REMOTE_DIR=$REMOTE_DIR"
+          echo "APP_NAME=${APP_NAME}"
+          echo "BUILD_NUMBER=${BUILD_NUMBER}"
+          echo "REMOTE_DIR=${REMOTE_DIR}"
           EOF
           '''
         }
