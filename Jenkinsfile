@@ -42,7 +42,7 @@ pipeline {
       steps {
         sshagent(credentials: ['DOCKER_HOST_SSH_KEY_ID']) {
           sh """
-            ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_HOST} '
+            ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_HOST} APP_NAME='${APP_NAME}' BUILD_NUMBER='${BUILD_NUMBER}' HOST_PORT='${HOST_PORT}' CONT_PORT='${CONT_PORT}' REMOTE_DIR='${REMOTE_DIR}' bash -s <<'EOF'
               set -e
               cd ${REMOTE_DIR}
               mkdir -p war_hist
@@ -88,7 +88,6 @@ pipeline {
                   exit 1
                 fi
               fi
-            '
           """
         }
       }
