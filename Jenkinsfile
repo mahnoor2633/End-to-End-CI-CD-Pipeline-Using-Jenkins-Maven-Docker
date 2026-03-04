@@ -52,6 +52,7 @@ pipeline {
               cp -f webapp.war "war_hist/webapp-${BUILD_NUMBER}-${TS}.war"
 
               # build versioned image + latest
+              echo ${APP_NAME}
               docker build -t ${APP_NAME}:${BUILD_NUMBER} -t ${APP_NAME}:latest .
 
               # restart container to new build
