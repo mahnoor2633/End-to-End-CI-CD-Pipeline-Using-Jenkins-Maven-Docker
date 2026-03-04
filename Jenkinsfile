@@ -41,50 +41,55 @@ pipeline {
     stage("Deploy on Docker Host") {
       steps {
         sshagent(credentials: ['DOCKER_HOST_SSH_KEY_ID']) {
-            sh """
-              ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_HOST} APP_NAME='${APP_NAME}' BUILD_NUMBER='${BUILD_NUMBER}' HOST_PORT='${HOST_PORT}' CONT_PORT='${CONT_PORT}' REMOTE_DIR='${REMOTE_DIR}' bash -s <<'EOF'
-        set -e
-        cd "\$REMOTE_DIR"
-        mkdir -p war_hist
-        TS=\\\$(date +%Y%m%d_%H%M%S)
-        
-        cp -f webapp.war "war_hist/webapp-\${BUILD_NUMBER}-\${TS}.war"
-        
-        docker build -t "\${APP_NAME}:\${BUILD_NUMBER}" -t "\${APP_NAME}:latest" .
-        
-        docker rm -f "\${APP_NAME}" 2>/dev/null || true
-        docker run -d --restart=always --name "\${APP_NAME}" -p "\${HOST_PORT}:\${CONT_PORT}" "\${APP_NAME}:\${BUILD_NUMBER}"
-        
-        PREV=\\\$(docker images "\${APP_NAME}" --format '{{.Tag}}' | grep -E '^[0-9]+$' | grep -v "^\\\${BUILD_NUMBER}\$" | sort -nr | head -n 1 || true)
-        
-        URL="http://127.0.0.1:\${HOST_PORT}/webapp/"
-        MAX=20
-        SLEEP=3
-        ok=0
-        
-        for i in \\\$(seq 1 \\\$MAX); do
-          code=\\\$(curl -s -o /dev/null -w "%{http_code}" "\\\$URL" || true)
-          if [ "\\\$code" = "200" ] || [ "\\\$code" = "302" ]; then
-            ok=1
-            echo "Healthy (HTTP \\\$code)"
-            break
-          fi
-          echo "Not healthy yet (HTTP \\\$code) attempt \\\$i/\\\$MAX"
-          sleep \\\$SLEEP
-        done
-        
-        if [ "\\\$ok" -ne 1 ]; then
-          echo "Health check failed. Rolling back..."
-          docker rm -f "\${APP_NAME}" 2>/dev/null || true
-          if [ -n "\\\$PREV" ]; then
-            docker run -d --restart=always --name "\${APP_NAME}" -p "\${HOST_PORT}:\${CONT_PORT}" "\${APP_NAME}:\\\$PREV"
-          else
-            echo "No previous image available for rollback."
-            exit 1
-          fi
-        fi
-        EOF
-          """
+          sh '''
+            ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_HOST} '
+              set -e
+              cd ${REMOTE_DIR}
+              mkdir -p war_hist
+              TS=$(date +%Y%m%d_%H%M%S)
+
+              # archive WAR
+              cp -f webapp.war "war_hist/webapp-${BUILD_NUMBER}-${TS}.war"
+
+              # build versioned image + latest
+              docker build -t ${APP_NAME}:${BUILD_NUMBER} -t ${APP_NAME}:latest .
+
+              # restart container to new build
+              docker rm -f ${APP_NAME} 2>/dev/null || true
+              docker run -d --restart=always --name ${APP_NAME} -p ${HOST_PORT}:${CONT_PORT} ${APP_NAME}:${BUILD_NUMBER}
+
+              # Find previous numeric tag (rollback candidate)
+              PREV=$(docker images ${APP_NAME} --format '{{.Tag}}' | grep -E '^[0-9]+$' | grep -v "^${BUILD_NUMBER}$" | sort -nr | head -n 1 || true)
+              
+              # Health check loop
+              URL="http://127.0.0.1:${HOST_PORT}/webapp/"   # change path if needed
+              MAX=20
+              SLEEP=3
+              ok=0
+              
+              for i in $(seq 1 $MAX); do
+                code=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || true)
+                if [ "$code" = "200" ] || [ "$code" = "302" ]; then
+                  ok=1
+                  echo "Healthy (HTTP $code)"
+                  break
+                fi
+                echo "Not healthy yet (HTTP $code) attempt $i/$MAX"
+                sleep $SLEEP
+              done
+              
+              if [ "$ok" -ne 1 ]; then
+                echo "Health check failed. Rolling back..."
+                docker rm -f ${APP_NAME} 2>/dev/null || true
+                if [ -n "$PREV" ]; then
+                  docker run -d --restart=always --name ${APP_NAME} -p ${HOST_PORT}:${CONT_PORT} ${APP_NAME}:$PREV
+                else
+                  echo "No previous image available for rollback."
+                  exit 1
+                fi
+              fi
+            '
+          '''
         }
       }
     }
