@@ -93,7 +93,7 @@ pipeline {
           echo "APP_NAME=${APP_NAME}"
           echo "BUILD_NUMBER=${BUILD_NUMBER}"
           echo "REMOTE_DIR=${REMOTE_DIR}"
-          'EOF'
+  'EOF'
           '''
         }
       }
