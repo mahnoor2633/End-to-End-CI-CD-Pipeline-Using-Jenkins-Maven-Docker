@@ -42,7 +42,7 @@ pipeline {
       steps {
         sshagent(credentials: ['DOCKER_HOST_SSH_KEY_ID']) {
           sh '''
-          ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_SERVER} DOCKER_HOST="${DOCKER_SERVER}" APP_NAME="${APP_NAME}" BUILD_NUMBER="${BUILD_NUMBER}" REMOTE_DIR="${REMOTE_DIR}" HOST_PORT="${HOST_PORT}" CONT_PORT="${CONT_PORT}" bash -se << EOF
+          ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_SERVER} DOCKER_IP="${DOCKER_SERVER}" APP_NAME="${APP_NAME}" BUILD_NUMBER="${BUILD_NUMBER}" REMOTE_DIR="${REMOTE_DIR}" HOST_PORT="${HOST_PORT}" CONT_PORT="${CONT_PORT}" bash -se << EOF
           set -e
           cd ${REMOTE_DIR}
           mkdir -p war_hist
@@ -63,7 +63,7 @@ pipeline {
           PREV=$(docker images ${APP_NAME} --format '{{.Tag}}' | grep -E '^[0-9]+$' | grep -v "^${BUILD_NUMBER}$" | sort -nr | head -n 1 || true)
                   
                   # Health check loop
-          URL="http://${DOCKER_HOST}:${HOST_PORT}/${APP_NAME}/"   # change path if needed
+          URL="http://${DOCKER_IP}:${HOST_PORT}/${APP_NAME}/"   # change path if needed
           echo "URL=${URL}"
           MAX=20
           SLEEP=3
