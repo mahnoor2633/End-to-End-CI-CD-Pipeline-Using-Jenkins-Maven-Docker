@@ -63,7 +63,7 @@ pipeline {
           PREV=$(docker images ${APP_NAME} --format '{{.Tag}}' | grep -E '^[0-9]+$' | grep -v "^${BUILD_NUMBER}$" | sort -nr | head -n 1 || true)
                   
                   # Health check loop
-          URL="http://${DOCKER_HOST}:${HOST_PORT}/${APP_NAME}/"   # change path if needed
+          URL="http://^${DOCKER_HOST}:^${HOST_PORT}/^${APP_NAME}/"   # change path if needed
           MAX=20
           SLEEP=3
           ok=0
