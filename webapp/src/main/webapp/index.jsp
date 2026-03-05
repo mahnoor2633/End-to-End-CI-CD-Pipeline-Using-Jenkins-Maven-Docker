@@ -1,7 +1,6 @@
 <form action="action_page.php">
   <div class="container">
     <h1>NEW USER REGISTRATION</h1>
-    <p><b><i>CHECK THIS OUT NOW THIS WILL DEPLOY AUTOMATICALLY AFTER COMMIT I WONT EVEN START THE CONTAINER</i></b></p>
     <p>Please fill this form to create an account.</p>
     <hr>
      
