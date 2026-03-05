@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_HOST = "3.27.247.137"
+    DOCKER_SERVER = "3.27.247.137"
     DOCKER_USER = "ubuntu"              // or ubuntu, depending on your OS
     REMOTE_DIR  = "/opt/Docker"
     APP_NAME    = "webapp"
@@ -32,7 +32,7 @@ pipeline {
         // Use SSH key auth from Jenkins credentials (recommended)
         sshagent(credentials: ['DOCKER_HOST_SSH_KEY_ID']) {
           sh """
-            scp -o StrictHostKeyChecking=no ${WAR_PATH} ${DOCKER_USER}@${DOCKER_HOST}:${REMOTE_DIR}/webapp.war
+            scp -o StrictHostKeyChecking=no ${WAR_PATH} ${DOCKER_USER}@${DOCKER_SERVER}:${REMOTE_DIR}/webapp.war
           """
         }
       }
@@ -42,7 +42,7 @@ pipeline {
       steps {
         sshagent(credentials: ['DOCKER_HOST_SSH_KEY_ID']) {
           sh '''
-          ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_HOST} DOCKER_HOST="${DOCKER_HOST}" APP_NAME="${APP_NAME}" BUILD_NUMBER="${BUILD_NUMBER}" REMOTE_DIR="${REMOTE_DIR}" HOST_PORT="${HOST_PORT}" CONT_PORT="${CONT_PORT}" bash -se << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${DOCKER_USER}@${DOCKER_SERVER} DOCKER_HOST="${DOCKER_HOST}" APP_NAME="${APP_NAME}" BUILD_NUMBER="${BUILD_NUMBER}" REMOTE_DIR="${REMOTE_DIR}" HOST_PORT="${HOST_PORT}" CONT_PORT="${CONT_PORT}" bash -se << 'EOF'
           set -e
           cd ${REMOTE_DIR}
           mkdir -p war_hist
