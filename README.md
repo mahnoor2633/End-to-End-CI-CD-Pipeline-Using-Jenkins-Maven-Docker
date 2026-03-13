@@ -78,3 +78,5 @@ Responsibilities:
 ## 📂 Project Structure
 <img width="1269" height="1030" alt="Jenkins-CICD-Diagram" src="https://github.com/user-attachments/assets/4a65bc12-20d0-49e0-b380-d18976a193ce" />
 
+## 📌 Implementation Steps
+https://docs.google.com/document/d/1Qprzdj8LS474osj-FT9NMilDFRR3jqGB4vqWrlrqbZM/edit?usp=sharing
